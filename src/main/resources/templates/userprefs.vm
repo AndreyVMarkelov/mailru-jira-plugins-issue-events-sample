@@ -1,0 +1,56 @@
+<html>
+    <head>
+        <title>$i18n.getText("god.events.dict.admin")</title>
+        <meta name="decorator" content="atl.general"/>
+        $webResourceManager.requireResource("jira.webresources:global-static")
+        $webResourceManager.requireResource("jira.webresources:jira-global")
+        $webResourceManager.requireResource("com.atlassian.auiplugin:ajs")
+        $webResourceManager.requireResource("ru.mail.jira.plugins.god-events:godresource")
+    </head>
+    <body class="aui">
+        <table width="100%" height="100%" cellspacing="0" bgcolor="#ffffff">
+        <tr>
+            <td class="adminMenuWrap">
+                #parse("templates/leftpanel.vm")
+            </td>
+            <td width="1" bgcolor="#bbbbbb">
+            </td>
+            <td valign="top">
+                <h3>Set history period</h3>
+                <form onsubmit="return validateForm();" class="aui" id="agpform" name="agpform" action="${baseUrl}/rest/godeventsws/1.0/geservice/setprefs" method="post">
+                  <div class="field-group">
+                    <label>Period in weeks<span class="aui-icon icon-required"></span></label>
+                    <input type="text" class="text" id="val" name="val" value="$ival"/>
+                  </div>
+                  <div class="buttons-container">
+                  <div class="buttons">
+                    <input type="submit" class="button submit" value='$i18n.getText("god.events.page.save")'/>
+                    <a class="button" href="javascript:history.back()">$i18n.getText("god.events.page.cancel")</a>
+                  </div>
+                </div>
+              </form>
+          </td>
+      </tr>
+      </table>
+      <script language="javascript">
+           function validateForm() {
+               if (AJS.$('#val').val() && AJS.$('#val').val() > 0 && is_int(AJS.$('#val').val())) {
+                   return true;
+               } else {
+                   AJS.$('#val').focus();
+                   AJS.$('#error').remove();
+                   AJS.$('#agpform').prepend('<div id="error" name="error" class="aui-message error">Name must be set</div>');
+                   return false;
+               }
+           }
+
+           function is_int(value) {
+               if((parseFloat(value) == parseInt(value)) && !isNaN(value)) {
+                   return true;
+               } else {
+                  return false;
+               }
+           }
+      </script>
+    </body>
+</html>

@@ -1,0 +1,20 @@
+<html>
+    <head>
+        <title>$i18n.getText("god.events.dict.events")</title>
+        <meta name="decorator" content="atl.general"/>
+        $webResourceManager.requireResource("jira.webresources:global-static")
+        $webResourceManager.requireResource("jira.webresources:jira-global")
+        $webResourceManager.requireResource("com.atlassian.auiplugin:ajs")
+        $webResourceManager.requireResource("jira.webresources:calendar")
+        $webResourceManager.requireResource("jira.webresources:calendar-$lang")
+        $webResourceManager.requireResource("ru.mail.jira.plugins.god-events:godresource")
+    </head>
+    <body class="aui">
+    <ul>
+        <li><a id="report" name="report" href="$baseUrl/plugins/servlet/godevents/viewer?page=reports" target="_blank"><b><i>$i18n.getText("god.events.replink")</i></b></a></li>
+        #if($hasPerm)
+        <li><a id="settings" name="settings" href="$baseUrl/plugins/servlet/godevents/viewer?page=settings" target="_blank"><b><i>$i18n.getText("god.events.setlink")</i></b></a></li>
+        #end
+    <ul>
+    </body>
+</html>

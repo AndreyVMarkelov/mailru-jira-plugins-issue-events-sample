@@ -1,0 +1,182 @@
+<html>
+    <head>
+        <title>$i18n.getText("god.events.dict.admin")</title>
+        <meta name="decorator" content="atl.general"/>
+        $webResourceManager.requireResource("jira.webresources:global-static")
+        $webResourceManager.requireResource("jira.webresources:jira-global")
+        $webResourceManager.requireResource("com.atlassian.auiplugin:ajs")
+        $webResourceManager.requireResource("jira.webresources:calendar")
+        $webResourceManager.requireResource("jira.webresources:calendar-$lang")
+        $webResourceManager.requireResource("ru.mail.jira.plugins.god-events:godresource")
+        <style type="text/css">
+            .headerSortUp { background: url('$baseUrl/images/icons/icon_sortascending.png') no-repeat center right; }
+            .headerSortDown { background: url('$baseUrl/images/icons/icon_sortdescending.png') no-repeat center right; }
+            .tsheader { cursor: pointer; }
+        </style>
+        <script language="javascript">
+            var dialogTitleVP = "$i18n.getText('god.events.page.admin.addvps')";
+            var dialogTitleCP = "$i18n.getText('god.events.page.admin.addcd')";
+            var dialogTitleGP = "$i18n.getText('god.events.page.admin.addgp')";
+            var addBtn = "$i18n.getText('god.events.page.bmodel.addmodelbtn')";
+            var cancelBtn = "$i18n.getText('god.events.page.cancel')";
+            var dialogBody = '<table><tr><td valign="top"><label for="vps">$i18n.getText("god.events.page.chooseusers")</label></td><td><select multiple="multiple" size="10" id="vps" name="vps">#foreach($entry in $allUsers.entrySet())<option value="$entry.key">$entry.value</option>#end</select></td></tr></table>';
+            var dialogGm = '<table><tr><td>$i18n.getText("god.events.page.act.add")</td><td><select id="cps" name="cps">#foreach($entry in $allUsers.entrySet())<option value="$entry.key">$entry.value</option>#end</select></td></tr><tr><td>$i18n.getText("god.events.page.act.add")</td><td><select id="cds" name="cds">#foreach($entry in $cds.entrySet())<option value="$entry.key">$entry.value</option>#end</select></td></tr></table>';
+        </script>
+    </head>
+    <body class="aui">
+        <table width="100%" height="100%" cellspacing="0" bgcolor="#ffffff">
+        <tr>
+            <td class="adminMenuWrap">
+                #parse("templates/leftpanel.vm")
+            </td>
+            <td width="1" bgcolor="#bbbbbb">
+            </td>
+            <td valign="top">
+                <table width="100%" cellpadding="10">
+                  <tr>
+                    <td>
+                      <table class="jiraform maxWidth">
+                        <tr>
+                          <td class="jiraformheader">
+                            <h3 class="formtitle">$i18n.getText("god.events.page.admin.projmgrs")</h3>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="jiraformbody">
+                            <table width="100%">
+                              <tr>
+                                <td width="85%">
+                                  <table width="100%" class="grid" id="datatbl" name="datatbl">
+                                    <thead>
+                                      <tr class="tsheader">
+                                        <th width="33%">$i18n.getText("god.events.page.user")</th>
+                                        <th width="33%">$i18n.getText("god.events.page.gameproject")</th>
+                                        <th width="33%">$i18n.getText("god.events.page.act")</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                    #foreach($entry in $uc.entrySet())
+                                      #foreach ($dentry in $entry.value.getGameProjects())
+                                        <tr>
+                                            <td width="33%">#if($allUsers.get($entry.key))$allUsers.get($entry.key)#else$entry.key#end</td>
+                                            <td width="33%">$gps.get($dentry)</td>
+                                            <td width="33%"><a href="#" onclick="deleteGameProj(event, '$baseUrl', '$entry.key', $dentry);">$i18n.getText("god.events.page.act.delete")</a></td>
+                                        </tr>
+                                      #end
+                                    #end
+                                    </tbody>
+                                  </table>
+                                </td>
+                                <td width="15%" valign="top">
+                                  <a href="#" onclick="addGameMgr(event, '$baseUrl');"><b>$i18n.getText("god.events.page.act.add")</b></a>
+                                  <hr/>
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <table class="jiraform maxWidth">
+                        <tr>
+                          <td class="jiraformheader">
+                            <h3 class="formtitle">$i18n.getText("god.events.page.admin.divisionmgrs")</h3>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="jiraformbody">
+                            <table width="100%">
+                              <tr>
+                                <td width="85%">
+                                  <table width="100%" class="grid" id="datatbl2" name="datatbl2">
+                                    <thead>
+                                      <tr class="tsheader">
+                                        <th width="33%">$i18n.getText("god.events.page.user")</th>
+                                        <th width="33%">$i18n.getText("god.events.page.compdept")</th>
+                                        <th width="33%">$i18n.getText("god.events.page.act")</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                    #foreach($entry in $uc.entrySet())
+                                      #foreach ($dentry in $entry.value.getDivisions())
+                                        <tr>
+                                            <td width="33%">#if($allUsers.get($entry.key))$allUsers.get($entry.key)#else$entry.key#end</td>
+                                            <td width="33%">$cds.get($dentry)</td>
+                                            <td width="33%"><a href="#" onclick="deleteDepMgr(event, '$baseUrl', '$entry.key', $dentry);">$i18n.getText("god.events.page.act.delete")</a></td>
+                                        </tr>
+                                      #end
+                                    #end
+                                    </tbody>
+                                  </table>
+                                </td>
+                                <td width="15%" valign="top">
+                                  <a href="#" onclick="addProjMgr(event, '$baseUrl');"><b>$i18n.getText("god.events.page.act.add")</b></a>
+                                  <hr/>
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <table class="jiraform maxWidth">
+                        <tr>
+                          <td class="jiraformheader">
+                            <h3 class="formtitle">$i18n.getText("god.events.page.admin.vps")</h3>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="jiraformbody">
+                            <table width="100%">
+                              <tr>
+                                <td width="85%">
+                                  <table width="100%" class="grid" id="datatbl3" name="datatbl3">
+                                    <thead>
+                                      <tr class="tsheader">
+                                        <th width="50%">$i18n.getText("god.events.page.user")</th>
+                                        <th width="50%">$i18n.getText("god.events.page.act")</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                    #foreach($entry in $uc.entrySet())
+                                      #if ($entry.value.isVP())
+                                        <tr>
+                                            <td width="50%">#if($allUsers.get($entry.key))$allUsers.get($entry.key)#else$entry.key#end</td>
+                                            <td width="50%"><a href="#" onclick="deleteVP(event, '$baseUrl', '$entry.key');">$i18n.getText("god.events.page.act.delete")</a></td>
+                                        </tr>
+                                      #end
+                                    #end
+                                    </tbody>
+                                  </table>
+                                </td>
+                                <td width="15%" valign="top">
+                                  <a href="#" onclick="addVP(event, '$baseUrl');"><b>$i18n.getText("god.events.page.act.add")</b></a>
+                                  <hr/>
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+            </td>
+        </tr>
+        </table>
+        <script language="javascript">
+            jQuery(document).ready( function () {
+                jQuery("#datatbl").tablesorter({debug: false});
+                jQuery("#datatbl2").tablesorter({debug: false});
+                jQuery("#datatbl3").tablesorter({debug: false});
+            });
+        </script>
+        #include("templates/adminscript.vm")
+    </body>
+</html>

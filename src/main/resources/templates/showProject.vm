@@ -1,0 +1,150 @@
+<html>
+    <head>
+        <title>$i18n.getText("god.events.dict.game.projects.edit")</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="decorator" content="atl.popup"/>
+        $webResourceManager.requireResource("jira.webresources:global-static")
+        $webResourceManager.requireResource("jira.webresources:jira-global")
+        $webResourceManager.requireResource("com.atlassian.auiplugin:ajs")
+        $webResourceManager.requireResource("jira.webresources:calendar")
+        $webResourceManager.requireResource("jira.webresources:calendar-$lang")
+        $webResourceManager.requireResource("ru.mail.jira.plugins.god-events:godresource")
+    </head>
+    <body class="aui">
+        <form onsubmit="return validateForm();" class="aui" id="agpform" name="agpform" action="${baseUrl}/rest/godeventsws/1.0/geservice/updategproject" method="post">
+            <h3>$i18n.getText("god.events.dict.game.projects.edit")</h3>
+            <input type="hidden" id="id" name="id" value="$prId"/>
+            <div class="field-group">
+                <label>$i18n.getText("god.events.page.info")<span class="aui-icon icon-required"></span></label>
+                <input type="text" class="text" id="name" name="name" value="$gp.getLocalName()" #if(!$hasPriv)readonly="readonly"#end/>
+            </div>
+            <div class="field-group">
+                <label>$i18n.getText("god.events.page.descr")</label>
+                <textarea rows="3" cols="30" id="descr" name="descr" #if(!$hasPriv)readonly="readonly"#end>$gp.getDescr()</textarea>
+            </div>
+            <div class="field-group">
+                <label>$i18n.getText("god.events.page.origname")</label>
+                <input type="text" class="text" id="origname" name="origname" value="$gp.getOrigName()" #if(!$hasPriv)readonly="readonly"#end/>
+            </div>
+            <div class="field-group">
+                <label>$i18n.getText("god.events.page.logo")</label>
+                <input type="text" class="text" id="logotype" name="logotype" value="$gp.getLogo()" #if(!$hasPriv)readonly="readonly"#end/>
+            </div>
+            <div class="field-group">
+                <label>$i18n.getText("god.events.page.pagename")</label>
+                <input type="text" class="text" id="page" name="page" value="$gp.getPage()" #if(!$hasPriv)readonly="readonly"#end/>
+            </div>
+            <div class="field-group">
+                <label>$i18n.getText("god.events.page.developer")</label>
+                <input type="text" class="text" id="developer" name="developer" value="$gp.getDeveloper()" #if(!$hasPriv)readonly="readonly"#end/>
+            </div>
+            <div class="field-group">
+                <label>$i18n.getText("god.events.page.bmodel")</label>
+                <select id="bm" name="bm" #if(!$hasPriv)disabled="disabled"#end>
+                    #foreach($entry in $bms.entrySet())
+                    <option value="$entry.key" #if($entry.key == $gp.getBModel()) selected="selected" #end>$entry.value</option>
+                    #end
+                </select>
+            </div>
+            <div class="field-group">
+                <label>$i18n.getText("god.events.page.companydeps")</label>
+                <select id="cd" name="cd" #if(!$hasPriv)disabled="disabled"#end>
+                    #foreach($entry in $cds.entrySet())
+                    <option value="$entry.key" #if($entry.key == $gp.getCompDep()) selected="selected" #end>$entry.value</option>
+                    #end
+                </select>
+            </div>
+            <div class="field-group">
+                <label>$i18n.getText("god.events.page.projtype")</label>
+                <select id="pt" name="pt" #if(!$hasPriv)disabled="disabled"#end>
+                    #foreach($entry in $pts.entrySet())
+                    <option value="$entry.key" #if($entry.key == $gp.getProjType()) selected="selected" #end>$entry.value</option>
+                    #end
+                </select>
+            </div>
+            <div class="field-group">
+                <label>$i18n.getText("god.events.page.statuses")</label>
+                <select id="sts" name="sts" #if(!$hasPriv)disabled="disabled"#end>
+                    #foreach($entry in $sts.entrySet())
+                    <option #if($entry.key == $gp.getStatus())selected="selected"#end value="$entry.key">$entry.value</option>
+                    #end
+                </select>
+            </div>
+            <div class="field-group">
+                <label>$i18n.getText("god.events.page.territory")</label>
+                <select id="territory" name="territory" #if(!$hasPriv)disabled="disabled"#end>
+                    #foreach($entry in $gpTerr.entrySet())
+                    <option #if($entry.key == $gp.getTerritory())selected="selected"#end value="$entry.key">$entry.value</option>
+                    #end
+                </select>
+            </div>
+            #if ($hasPriv)
+            <div class="buttons-container">
+                <div class="buttons">
+                    <input type="button" onclick="validateForm();updateProject(event, '$baseUrl');" class="button submit" value='$i18n.getText("god.events.page.save")' #if($gps.size() == 0 || $eks.size() == 0)disabled="disabled"#end/>
+                    <a class="button" onclick="closeWin(event);">$i18n.getText("god.events.page.cancel")</a>
+                </div>
+            </div>
+            #end
+        </form>
+        <hr/><br/>
+        <button id="histBtn" onclick="history();">Show history</button>
+        <div id="hist" name="hist" class="mod-content" style="display: none;">
+          <div style="overflow-y: auto;height: 300px;">
+          #foreach($h in $hist.getHist())
+          <div class="issue-data-block focused">
+            <div class="action-details">
+              <span class="date">$sdt.format($h.getUtime())</span>: <b>$h.getUser()</b> made changes for #if($h.getType() == 2)project <b>$gpss.get($h.getRefId())</b>#else event <b>$evs.get($h.getRefId()).getName()</b>#end
+            </div>
+            <div class="changehistory action-body">
+              <table width="100%" cellspacing="0" cellpadding="0" border="0">
+                <thead>
+                  <tr>
+                    <th width="20%"><u>Field</th>
+                    <th width="40%"><u>Old value</th>
+                    <th width="40%"><u>New value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                #foreach($det in $h.getDetails())
+                <tr>
+                  <td class="activity-name" width="20%">$det.getField()</td>
+                  <td class="activity-old-val" width="40%">$dwrap.getVal($det.getField(), $det.getOldval())</td>
+                  <td class="activity-new-val" width="40%">$dwrap.getVal($det.getField(), $det.getNewval())</td>
+                </tr>
+                #end
+                </tbody>
+              </table>
+            </div>
+          </div>
+          #end
+          </div>
+        </div>
+        <script language="javascript">
+            function closeWin(event) {
+                event.preventDefault();
+                self.close();
+            }
+
+            function validateForm() {
+                if (!AJS.$('#name').val()) {
+                    AJS.$('#name').focus();
+                    AJS.$('#error').remove();
+                    AJS.$('#agpform').prepend('<div id="error" name="error" class="aui-message error">Name must be set</div>');
+                    return false;
+                }
+            }
+
+            function history() {
+                var isHidden = AJS.$('#hist').is(':hidden');
+                if (isHidden) {
+                    AJS.$('#histBtn').text('Close history');
+                    AJS.$('#hist').show();
+                } else {
+                    AJS.$('#histBtn').text('Show history');
+                    AJS.$('#hist').hide();
+                }
+            }
+        </script>
+    </body>
+</html>

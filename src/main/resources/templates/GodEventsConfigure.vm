@@ -1,0 +1,101 @@
+<html>
+    <head>
+        <title>$i18n.getText("god.events.admin.title")</title>
+        <meta name="decorator" content="admin"/>
+        $webResourceManager.requireResource("jira.webresources:global-static")
+        $webResourceManager.requireResource("jira.webresources:jira-global")
+        $webResourceManager.requireResource("com.atlassian.auiplugin:ajs")
+        $webResourceManager.requireResource("jira.webresources:autocomplete")
+    </head>
+    <body class="aui">
+        #if($action.hasAdminPermission())
+            <fieldset rel="pgadmin" class="hidden user-picker-params">
+                <input type="hidden" title="formName" value="jiraform">
+                <input type="hidden" title="fieldName" value="pgadmin">
+                <input type="hidden" title="fieldId" value="pgadmin">
+                <input type="hidden" title="multiSelect" value="false">
+                <input type="hidden" title="userPickerEnabled" value="true">
+            </fieldset>
+            #if ($action.hasAnyErrors())
+            <div class="aui-message error">
+                <h4>$action.getText("god.events.admin.configuration.error")</h4>
+                <ul>
+                #foreach ($error in $action.getErrorMessages())
+                    <li>$action.getText($error)</li>
+                #end
+                #foreach ($error in $action.errors)
+                    <li>$error</li>
+                #end
+                </ul>
+            </div>
+            #end
+            #if ($saved)
+            <div class="aui-message closeable shadowed">
+                <p class="title"><span class="aui-icon icon-success"></span><strong>$action.getText("god.events.admin.configuration.success.text")</strong></p>
+            </div>
+            #end
+            <table>
+                <caption class="jiraformheader"><b>$action.getText("god.events.admin.caption")</b></caption>
+                <tr><td>
+                    <form class="aui" onsubmit="if (this.submitted) return false; this.submitted = true; return true"
+                          name="jiraform" method="post" action="ViewGodEventsCfg.jspa">
+                        <div class="field-group">
+                            <label for="dbHost">$action.getText("god.events.admin.dbhost")<span class="aui-icon icon-required"></span></label>
+                            <input type="text" class="text" id="dbHost" name="dbHost" #if ($dbHost) value="$dbHost" #end/>
+                        </div>
+                        <div class="field-group">
+                            <label for="dbPort">$action.getText("god.events.admin.dbport")<span class="aui-icon icon-required"></span></label>
+                            <input type="text" class="text" id="dbPort" name="dbPort" #if ($dbPort) value="$dbPort" #end/>
+                        </div>
+                        <div class="field-group">
+                            <label for="dbName">$action.getText("god.events.admin.dbname")<span class="aui-icon icon-required"></span></label>
+                            <input type="text" class="text" id="dbName" name="dbName" #if ($dbName) value="$dbName" #end/>
+                        </div>
+                        <div class="field-group">
+                            <label for="dbUser">$action.getText("god.events.admin.dbuser")<span class="aui-icon icon-required"></span></label>
+                            <input type="text" class="text" id="dbUser" name="dbUser" #if ($dbUser) value="$dbUser" #end/>
+                        </div>
+                        <div class="field-group">
+                            <label for="dbPass">$action.getText("god.events.admin.dbpass")<span class="aui-icon icon-required"></span></label>
+                            <input type="password" class="text" id="dbPass" name="dbPass" #if ($dbPass) value="$dbPass" #end/>
+                        </div>
+                        <div class="field-group">
+                            <label for="userNames">$action.getText("god.events.admin.plugin.admin")<span class="aui-icon icon-required"></span></label>
+                            <fieldset rel="userNames" class="hidden user-picker-params">
+                                <input title="formName" type="hidden" value="startform"/>
+                                <input title="fieldName" type="hidden" value="userNames"/>
+                                <input title="actionToOpen" type="hidden" value="/secure/popups/UserPickerBrowser.jspa"/>
+                                <input title="multiSelect" type="hidden"  value="true"/>
+                                <input title="userPickerEnabled" type="hidden" value="true"/>
+                            </fieldset>
+                            <div class="ajax_autocomplete" id="userNames_container">
+                                <textarea class="textarea long-field" cols="30" id="userNames" name="userNames" rows="3" wrap="virtual">#if($userNames)${userNames}#end</textarea>
+                                <a class="popup-trigger" href="#">
+                                    <img alt="$action.getText('god.events.admin.specify.user')" height="16" name="assigneeImage" src="/jira/images/icons/filter_public.gif" title="$action.getText('god.events.admin.specify.user')" width="16" />
+                                </a>
+                                <div id="userNames_results" class="ajax_results"></div>
+                                <div class="description"">$action.getText("god.events.admin.match")</div>
+                            </div>
+                        </div>
+                        <div class="field-group">
+                            <label for="selectedGroups">$action.getText("god.events.admin.plugin.groups")</label>
+                            <select multiple="" size="10" id="selectedGroups" name="selectedGroups">
+                            #foreach ($group in $allGroups)
+                                <option value="$group.getName()" #if ($savedGroups.contains($group.getName())) selected="selected" #end>$group.getName()</option>
+                            #end
+                            </select>
+                        </div>
+                        <div class="buttons-container">
+                            <div class="buttons">
+                                <input class="button submit" type="submit" name="add" value="$action.getText("common.words.save")" accesskey="S" title="Press Alt+Shift+S to submit form"/>
+                                <input class="button submit" id="cancelButton" type="button" accesskey="`" title="Cancel (Alt+Shift + `)" name="Cancel" value="$action.getText("common.words.cancel")" onclick="location.href='$baseUrl/secure/AdminSummary.jspa'"/>
+                            </div>
+                        </div>
+                   </form>
+                </td></tr>
+            </table>
+        #else
+            <div class="errorArea">Only "jira-administrators" can have access to this page.</div>
+        #end
+    </body>
+</html>

@@ -1,0 +1,27 @@
+<script language="javascript">
+    function ch(baseUrl) {
+        AJS.$("#postiframe").remove();
+        var ifr = '<iframe name="postiframe" id="postiframe" style="display: none"></iframe>';
+        AJS.$('body').append(ifr);
+        var form = AJS.$('#theuploadform');
+        form.append(AJS.$("#uploadFile"));
+        form.attr("file", AJS.$('#uploadFile').val());
+        form.submit();
+ 
+        AJS.$("#postiframe").load(function (event) {
+            event.preventDefault();
+            var iframeContents = AJS.$("#postiframe")[0].contentWindow.document.body.innerHTML;
+            if (AJS.$.browser.msie) {
+                AJS.$('#uf').replaceWith(AJS.$('#uploadFile').clone());
+            }
+            else {
+                AJS.$('#uploadFile').val('');
+            }
+            var data = eval("(" + AJS.$(iframeContents).text() + ")");
+            var divFile = '<div><input class="checkbox" type="checkbox" checked="" name="files" value="' + data.fileProps.fId + '"/><span>' + data.fileProps.fName + '</span></div>';
+            AJS.$("#filesContent").append('<input type="file" id="uploadFile" name="uploadFile" onchange="ch(\'' + baseUrl + '\');"/>');
+            AJS.$("#filesContent").prepend(divFile);
+            AJS.$('#theuploadform > input').remove();
+        });
+    }
+</script>

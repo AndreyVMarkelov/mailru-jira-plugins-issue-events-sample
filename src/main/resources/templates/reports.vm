@@ -1,0 +1,274 @@
+<html>
+    <head>
+        <title>$i18n.getText("god.events.replink")</title>
+        <meta name="decorator" content="atl.general"/>
+        $webResourceManager.requireResource("jira.webresources:global-static")
+        $webResourceManager.requireResource("jira.webresources:jira-global")
+        $webResourceManager.requireResource("com.atlassian.auiplugin:ajs")
+        $webResourceManager.requireResource("ru.mail.jira.plugins.god-events:godresource")
+        $webResourceManager.requireResource("jira.webresources:calendar")
+        $webResourceManager.requireResource("jira.webresources:calendar-$lang")
+        <style type="text/css">
+            .sorting_asc { color: #5ec64a; }
+            .sorting_desc { color: #f14933; }
+        </style>
+    </head>
+    <body class="aui">
+    <table width="100%">
+        <tr>
+            <td width="70%"><h3>$i18n.getText("god.events.replink")</h3></td>
+            <td width="30%" align="right">
+            <a style="margin:12px;" onclick="refreshCols();"><u>#if($allCols == "true")Hide project details#else Show project details#end</u></a>
+            <a style="margin:12px;" onclick="openFilters();"><u>Filters</u></a>
+            <a style="margin:12px;" onclick="openHistory(event, '$baseUrl');"><u>History</u></a>
+            <a style="margin:12px;" href="$baseUrl/plugins/servlet/godevents/viewer?page=settings"><u>Go to Settings</u></a>
+            <a style="margin:12px;" href="#" onclick="getExcelReport(event, '$baseUrl');"><u>Download Excel</u></a>
+            </td>
+        </tr>
+    </table>
+    #if($projs.size() > 0)
+    <table id="tinytable">
+        <thead>
+            <tr>
+                <th class="eventtd1">Game Project</th>
+                #if ($allCols == "true")
+                <th class="eventtd">Department</th>
+                <th class="eventtd">Business model</th>
+                <th class="eventtd">Type</th>
+                <th class="eventtd">Territory</th>
+                #end
+                #foreach($col in $colHeaders)<th class="eventtd">$col</th>#end
+            </tr>
+        </thead>
+        <tbody>
+            #foreach($proj in $projs)
+            <tr>
+                <td class="eventtd1"><a onclick="openWP(event, '$baseUrl', $proj.getId());">$proj.getLocalName()#if($hist.projectExist($proj.getId()))*#end</a></td>
+                #if ($allCols == "true")
+                <td class="eventtd">$cds.get($proj.getCompDep())</td>
+                <td class="eventtd">$bms.get($proj.getbModel())</td>
+                <td class="eventtd">$pts.get($proj.getProjectType())</td>
+                <td class="eventtd">$gpTerr.get($proj.getTerritory())</td>
+                #end
+                #foreach($dates in $proj.getDates().entrySet())
+                <td class="eventtd" #if($proj.getColors().get($dates.key))style="background-color: $proj.getColors().get($dates.key);"#end id="$proj.getId()$dates.key" onclick="displayEvent(event, $proj.getId()$dates.key);" onmouseout="leaveEvent(event, $proj.getId()$dates.key);" #if($dates.value.size() > 0)onmouseover="cursorOn(event);"#end>
+                #foreach($date in $dates.value)#if($date)#if($velocityCount > 1),#end<a onclick="openW(event, '$baseUrl', $date.getId());">$date.getType()#if($hist.eventExist($date.getId()))*#end</a>#end#end
+                </td>
+                #end
+            </tr>
+            #end
+        </tbody>
+    </table>
+    #else
+    <p style="color:red">There are no events satisfying conditions</p>
+    #end
+
+    <div id="panel" class="container">
+        <form class="aui content" id="reportForm" onsubmit="return validateForm();" name="reportForm" action="$baseUrl/plugins/servlet/godevents/viewer?page=reports" method="post">
+            <input type="hidden" id="page" name="page" value="reports"/>
+            <input type="hidden" id="allCols" name="allCols" value="$allCols"/>
+            <table width="100%">
+            <tr>
+                <td width="33%" height="100" valign="top" aling="center">
+                <table>
+                    <tr>
+                        <td valign="top" align="right">$i18n.getText("god.events.page.compdept")</td>
+                        <td><select size="5" multiple="multiple" id="cp" name="cp">#foreach($cs in $cds.entrySet())<option #if($icp.contains($cs.key))selected="selected"#end value="$cs.key">$cs.value</option>#end</select></td>
+                    </tr>
+                    <tr>
+                        <td valign="top" align="right">$i18n.getText("god.events.page.projtype")</td>
+                        <td><select size="5" multiple="multiple" id="pt" name="pt">#foreach($pt in $pts.entrySet())<option #if($ipt.contains($pt.key))selected="selected"#end value="$pt.key">$pt.value</option>#end</select></td>
+                    </tr>
+                    <tr>
+                        <td valign="top" align="right">$i18n.getText("god.events.page.bmodel")</td>
+                        <td><select size="5" multiple="multiple" id="bm" name="bm">#foreach($bm in $bms.entrySet())<option #if($ibm.contains($bm.key))selected="selected"#end value="$bm.key">$bm.value</option>#end</select></td>
+                    </tr>
+                </table>
+                </td>
+                <td width="33%" height="100" valign="top" aling="center">
+                    <table>
+                    <tr>
+                        <td valign="top" align="right">$i18n.getText("god.events.page.eventkind")</td>
+                        <td><select size="5" multiple="multiple" id="ek" name="ek">#foreach($ek in $eks.entrySet())<option #if($iek.contains($ek.key))selected="selected"#end value="$ek.key">$ek.value</option>#end</select></td>
+                    </tr>
+                    <tr>
+                        <td valign="top" align="right">$i18n.getText("god.events.page.origname")</td>
+                        <td><select size="5" multiple="multiple" id="origname" name="origname">#foreach($gpName in $gpNames)<option #if($iorigname.contains($gpName))selected="selected"#end value="$gpName">$gpName</option>#end</select></td>
+                    </tr>
+                    <tr>
+                        <td valign="top" align="right">$i18n.getText("god.events.page.territory")</td>
+                        <td><select size="5" multiple="multiple" id="territory" name="territory">#foreach($gpt in $gpTerr.entrySet())<option #if($iterritory.contains($gpt.key.toString()))selected="selected"#end value="$gpt.key">$gpt.value</option>#end</select></td>
+                    </tr>
+                    </table>
+                </td>
+                <td width="33%" height="100" valign="top" aling="center">
+                    <table>
+                    <tr>
+                        <td align="right">$i18n.getText("god.events.page.startdate")</td>
+                        <td><input type="text" id="startDate" name="startDate" #if($istartDate)value="$istartDate"#end/><img id="startDate_trigger" src="$baseUrl/images/icons/cal.gif" width="16" height="16" border="0" alt="Pick a end date"/></td>
+                    </tr>
+                    <tr>
+                        <td align="right">$i18n.getText("god.events.page.enddate")</td>
+                        <td><input type="text" id="endDate" name="endDate" #if($iendDate)value="$iendDate"#end/><img id="endDate_trigger" src="$baseUrl/images/icons/cal.gif" width="16" height="16" border="0" alt="Pick a end date"/></td>
+                    </tr>
+                    </table>
+                </td>
+            </tr>
+            </table>
+            <div class="buttons-container">
+                <div class="buttons">
+                    <input type="submit" class="button submit" onclick="getReport('$baseUrl');" value='$i18n.getText("god.events.page.search")'/>
+                    <input type="button" class="button" onclick="clearFilters();" value='$i18n.getText("god.events.page.reset")'/>
+                    <input type="button" class="simplemodal-close"  value='$i18n.getText("god.events.page.cancel")'/>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    #foreach($proj in $projs)
+        #foreach($dates in $proj.getDates().entrySet())
+            #if($dates.value.size() > 0)
+                <div id="t$proj.getId()$dates.key" class="eventinfo">
+                <ul>
+                #foreach($date in $dates.value)
+                    <li>$date.getInfo()</li>
+                #end
+                </ul>
+                </div>
+            #end
+        #end
+    #end
+
+    <script type="text/javascript">
+        function refreshCols() {
+            var allc = AJS.$('#allCols').val();
+            if (allc == "true") {
+                var loc = window.location.href;
+                var inx = loc.indexOf('&allCols=true');
+                var linx = loc.lastIndexOf('&allCols=true');
+                if (inx != -1 && linx != -1) loc = loc.replace('&allCols=true', '');
+                window.location.href = loc;
+            } else {
+                window.location.href = (window.location.href + "&allCols=true");
+            }
+        }
+
+        Calendar.setup({
+            firstDay : 0,
+            inputField : 'startDate',
+            button : 'startDate_trigger',
+            align : 'Br',
+            singleClick : true,
+            useISO8601WeekNumbers : false,
+            ifFormat : '%Y-%m-%d'
+        });
+
+        Calendar.setup({
+            firstDay : 0,
+            inputField : 'endDate',
+            button : 'endDate_trigger',
+            align : 'Br',
+            singleClick : true,
+            useISO8601WeekNumbers : false,
+            ifFormat : '%Y-%m-%d'
+        });
+
+        function clearFilters() {
+            AJS.$('#cp').val('');
+            AJS.$('#pt').val('');
+            AJS.$('#bm').val('');
+            AJS.$('#ek').val('');
+            AJS.$('#origname').val('');
+            AJS.$('#territory').val('');
+            AJS.$('#startDate').val('');
+            AJS.$('#endDate').val('');
+        }
+
+        AJS.$("#startDate").val(#if($istartDate)"$istartDate"#end);
+        AJS.$("#endDate").val(#if($iendDate)"$iendDate"#end);
+
+        function openFilters() {
+            jQuery('#panel').modal();
+        }
+
+        function displayEvent(e, id) {
+            var isHidden = AJS.$('#t' + id).is(':hidden');
+            if (!isHidden) return;
+
+            var tip = AJS.$(this).attr('title');
+            AJS.$(this).attr('title','');
+            AJS.$(this).parent().append(AJS.$('#' + id));
+
+            var top = AJS.$('#' + id).offset().top;
+            var left = AJS.$('#' + id).offset().left + AJS.$('#' + id).width();
+            if (AJS.$(window).width() - left - AJS.$('#t' + id).width() < 0) {
+                left = AJS.$('#' + id).offset().left - AJS.$('#t' + id).width();
+            }
+
+            AJS.$('#t' + id).css('top', top);
+            AJS.$('#t' + id).css('left', left);
+            AJS.$('#t' + id).fadeTo('fast', 1.0);
+        }
+
+        function leaveEvent(e, id) {
+            AJS.$('#t' + id).hide();
+            AJS.$('#' + id).css('cursor','default');
+        }
+
+        function openW(event, baseUrl, l) {
+            event.preventDefault();
+            window.open(baseUrl + "/plugins/servlet/godevents/viewer?page=event&ev=" + l,
+               'TheNewpop',
+               'fullscreen=yes,toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=no');
+        }
+
+        function openWP(event, baseUrl, l) {
+            event.preventDefault();
+            window.open(baseUrl + "/plugins/servlet/godevents/viewer?page=project&pr=" + l,
+               'TheNewpop',
+               'fullscreen=yes,toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=no');
+        }
+
+        function openHistory(event, baseUrl) {
+            event.preventDefault();
+            window.open(baseUrl + "/plugins/servlet/godevents/viewer?page=history",
+               'TheNewpop',
+               'fullscreen=yes,toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=no');
+        }
+
+        function cursorOn(event) {
+            var elem = (event.target) ? event.target : event.srcElement;
+            jQuery(elem).css('cursor','pointer');
+        }
+
+        jQuery(document).ready( function () {
+            AJS.$('.footer').remove();
+
+            var hh = jQuery('#header').height() + jQuery('.alertHeader').height() + jQuery('.global-warning').height();
+            var maintbheight = screen.height - hh - 300;
+
+            var oTable = jQuery('#tinytable').dataTable( {
+                "bSort": true,
+                "bScrollInfinite": true,
+                "sScrollY": maintbheight + "px",
+                "sScrollX": "100%",
+                "bScrollCollapse": true,
+                "bFilter": false,
+                "bInfo": false,
+                "bPaginate": false
+            });
+            #if($allCols == "true")
+            new FixedColumns( oTable , { "iLeftColumns": 5 });
+            #else
+            new FixedColumns( oTable , { "iLeftColumns": 1 });
+            #end
+        });
+
+        function getExcelReport(event, baseUrl) {
+            event.preventDefault();
+            var url = baseUrl + "/rest/godeventsws/1.0/geservice/excelreport?" + AJS.$("#reportForm").serialize();
+            location.href = url;
+        }
+    </script>
+    </body>
+</html>

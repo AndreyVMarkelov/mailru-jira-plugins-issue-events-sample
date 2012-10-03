@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<atlassian-plugin key="${project.groupId}.${project.artifactId}" name="${project.name}" plugins-version="2">
+    <plugin-info>
+        <description>${project.description}</description>
+        <version>${project.version}</version>
+        <vendor name="${project.organization.name}" url="${project.organization.url}"/>
+    </plugin-info>
+
+    <!-- Gadget -->
+    <gadget key="god-events-gadget" location="god-events-gadget.xml">
+        <param name="roles-required">use</param>
+    </gadget>
+
+    <web-resource key="godresource" name="GOD resources">
+        <resource type="download" name="god.css" location="resources/god.css"/>
+        <resource type="download" name="god.js" location="resources/god.js"/>
+        <resource type="download" name="jquery.dataTables.min.js" location="resources/jquery.dataTables.min.js"/>
+        <resource type="download" name="jquery-ui-1.8.21.custom.min.js" location="resources/jquery-ui-1.8.21.custom.min.js"/>
+        <resource type="download" name="jquery.ui.tinytbl.js" location="resources/jquery.ui.tinytbl.js"/>
+        <resource type="download" name="jquery.tablesorter.js" location="resources/jquery.tablesorter.js"/>
+        <resource type="download" name="jquery_ft.js" location="resources/jquery_ft.js"/>
+    </web-resource>
+
+    <resource type="i18n" name="i18n" location="ru.mail.jira.plugins.god-events"/>
+    <resource type="download" location="/images/mru-thumb.gif" name="mru-thumb.gif">
+        <param name="content-type" value="image/gif"/>
+    </resource>
+
+    <!-- Sections -->
+    <web-item key="god-events-configuration" name="MRIM configuration link on administrators page" section="system.admin/globalsettings" weight="95">
+        <label key="god.events.admin.title"/>
+        <condition class="com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition">
+            <param name="permission">admin</param>
+        </condition>
+        <link linkId="god-events-configuration">/secure/ViewGodEventsCfg!default.jspa</link>
+    </web-item>
+
+    <web-item key="god-events-actions" name="MRIM configuration link for user profile" section="system.user.options/personal" weight="95">
+        <label key="god.events.user.links"/>
+        <condition class="ru.mail.jira.plugins.GodEventsCondition"/>
+        <link linkId="god-events-actions">/plugins/servlet/godevents/viewer?page=links</link>
+    </web-item>
+
+    <webwork1 key="GodEventsConfigurationManagement" name="GOD events configuration management" class="java.lang.Object">
+        <actions>
+            <action name="ru.mail.jira.plugins.GodConfigureAction" alias="ViewGodEventsCfg">
+                <view name="input">/templates/GodEventsConfigure.vm</view>
+                <view name="success">/templates/GodEventsConfigure.vm</view>
+            </action>
+        </actions>
+    </webwork1>
+
+    <!-- component imports -->
+    <component key="god-events-config" name="GOD events Plug-In configuration" class="ru.mail.jira.plugins.GodEventsMgrImpl"/>
+
+    <component-import key="pluginSettingsFactory">
+        <interface>com.atlassian.sal.api.pluginsettings.PluginSettingsFactory</interface>
+    </component-import>
+    <component-import key="applicationProperties">
+        <interface>com.atlassian.sal.api.ApplicationProperties</interface>
+    </component-import>
+    <component-import key="renderer" interface="com.atlassian.templaterenderer.velocity.one.six.VelocityTemplateRenderer" />
+    <component-import key="loginUriProvider" interface="com.atlassian.sal.api.auth.LoginUriProvider" />
+    <!-- End imports -->
+
+    <!-- Rest resources -->
+    <rest key="ge-base-resources" path="/godeventsws" version="1.0">
+        <description>Provides the REST resource for the "reger" plugin.</description>
+    </rest>
+    <!-- End rest -->
+
+    <!-- Servlets -->
+    <servlet key="item-renderer" class="ru.mail.jira.plugins.ViewerServlet">
+        <url-pattern>/godevents/viewer</url-pattern>
+    </servlet>
+    <!-- End servlets -->
+
+</atlassian-plugin>

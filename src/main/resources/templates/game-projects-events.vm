@@ -1,0 +1,22 @@
+<script language="javascript">
+    jQuery(document).ready( function () {
+        jQuery("#datatbl").tablesorter({debug: false});
+    });
+
+    function deleteGameProject(event, baseUrl, gpId) {
+        event.preventDefault();
+
+        JIRA.SmartAjax.makeRequest({
+            url: baseUrl + "/rest/godeventsws/1.0/geservice/deletegameproject",
+            type: "POST",
+            dataType: "json",
+            data: {"id": gpId},
+            error: function(xhr, ajaxOptions, thrownError) {
+                alert(xhr.responseText);
+            },
+            success: function(result) {
+                window.location.reload();
+            }
+        });
+    }
+</script>

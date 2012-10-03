@@ -1,0 +1,53 @@
+<script language="javascript">
+    /**
+     * Add project type.
+     */
+    function addProjType(event, baseUrl) {
+        event.preventDefault();
+        var md = new AJS.Dialog({
+            width:350,
+            height:200,
+            id:"addpt-dialog",
+            closeOnOutsideClick: true
+        });
+        md.addHeader(dialogTitle);
+        md.addPanel("load_panel", panelBody);
+        md.addButton(addBtn, function(){
+            if (!AJS.$("#namefld").val()) {
+                alert('The name field must be set');
+                return;
+            }
+
+            JIRA.SmartAjax.makeRequest({
+                url: baseUrl + "/rest/godeventsws/1.0/geservice/addprojtype",
+                type: "POST",
+                dataType: "json",
+                data: {"name": AJS.$("#namefld").val(), "comment": AJS.$("#commentfld").val()},
+                error: function(xhr, ajaxOptions, thrownError) {
+                    alert(xhr.responseText);
+                },
+                success: function(result) {
+                    window.location.reload();
+                }
+            });
+        });
+        md.addCancel(cancelBtn, function(){ md.hide(); });
+        md.show();
+    }
+
+    function deleteProjType(event, baseUrl, id) {
+        event.preventDefault();
+        JIRA.SmartAjax.makeRequest({
+        url: baseUrl + "/rest/godeventsws/1.0/geservice/deleteprojtype",
+        type: "POST",
+        dataType: "json",
+        data: {"id": id},
+        error: function(xhr, ajaxOptions, thrownError) {
+            alert(xhr.responseText);
+        },
+        success: function(result) {
+            window.location.reload();
+        }
+      });
+    }
+</script>

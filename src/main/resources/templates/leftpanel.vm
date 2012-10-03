@@ -1,0 +1,82 @@
+<div class="section">
+    <table width="100%" height="100%">
+    <tr><td class="jiraformheader" align="center">
+        <h4>$i18n.getText("god.events.dicts")</h4>
+    </td></tr>
+    <tr><td style="padding-left:20px;">
+    <ul>
+        <li style="margin-bottom: 7px;list-style: square outside;"><a id="report" name="report" href="$baseUrl/plugins/servlet/godevents/viewer?page=reports"><b><i>$i18n.getText("god.events.replink")</i></b></a></li>
+        #if ($isAdmin || !$card.getGameProjects().isEmpty())
+        <li style="margin-bottom: 7px;list-style: square outside;">
+            #if ($listType == 1)
+            <a href="$baseUrl/plugins/servlet/godevents/viewer?page=events"><strong><u>$i18n.getText("god.events.dict.events")</u></strong></a>
+            #else
+            <a href="$baseUrl/plugins/servlet/godevents/viewer?page=events"><strong>$i18n.getText("god.events.dict.events")</strong></a>
+            #end
+        </li>
+        #end
+        #if ($isAdmin || !$card.getGameProjects().isEmpty() || !$card.getDivisions().isEmpty())
+        <li style="margin-bottom: 7px;list-style: square outside;">
+            #if ($listType == 2)
+            <a href="$baseUrl/plugins/servlet/godevents/viewer?page=gameprojects"><strong><u>$i18n.getText("god.events.dict.game.projects")</u></strong></a>
+            #else
+            <a href="$baseUrl/plugins/servlet/godevents/viewer?page=gameprojects"><strong>$i18n.getText("god.events.dict.game.projects")</strong></a>
+            #end
+        </li>
+        #end
+        #if ($isAdmin || $card.isVP())
+        <li style="margin-bottom: 7px;list-style: square outside;">
+            #if ($listType == 3)
+            <a href="$baseUrl/plugins/servlet/godevents/viewer?page=compdeps"><strong><u>$i18n.getText("god.events.dict.company.deps")</u></strong></a>
+            #else
+            <a href="$baseUrl/plugins/servlet/godevents/viewer?page=compdeps"><strong>$i18n.getText("god.events.dict.company.deps")</strong></a>
+            #end
+        </li>
+        #end
+        #if ($isAdmin || $card.isVP())
+        <li style="margin-bottom: 7px;list-style: square outside;">
+            #if ($listType == 4)
+            <a href="$baseUrl/plugins/servlet/godevents/viewer?page=projtypes"><strong><u>$i18n.getText("god.events.dict.project.types")</u></strong></a>
+            #else
+            <a href="$baseUrl/plugins/servlet/godevents/viewer?page=projtypes"><strong>$i18n.getText("god.events.dict.project.types")</strong></a>
+            #end
+        </li>
+        #end
+        #if ($isAdmin || $card.isVP())
+        <li style="margin-bottom: 7px;list-style: square outside;">
+            #if ($listType == 5)
+            <a href="$baseUrl/plugins/servlet/godevents/viewer?page=bmodels"><strong><u>$i18n.getText("god.events.dict.busyness.model")</u></strong></a>
+            #else
+            <a href="$baseUrl/plugins/servlet/godevents/viewer?page=bmodels"><strong>$i18n.getText("god.events.dict.busyness.model")</strong></a>
+            #end
+        </li>
+        #end
+        #if ($isAdmin || $card.isVP())
+        <li style="margin-bottom: 7px;list-style: square outside;">
+            #if ($listType == 6)
+            <a href="$baseUrl/plugins/servlet/godevents/viewer?page=eventtypes"><strong><u>$i18n.getText("god.events.dict.event.kind")</u></strong></a>
+            #else
+            <a href="$baseUrl/plugins/servlet/godevents/viewer?page=eventtypes"><strong>$i18n.getText("god.events.dict.event.kind")</strong></a>
+            #end
+        </li>
+        #end
+        #if ($isAdmin)
+        <li style="margin-bottom: 7px;list-style: square outside;">
+            #if ($listType == 7)
+            <a href="$baseUrl/plugins/servlet/godevents/viewer?page=admin"><strong><u>$i18n.getText("god.events.dict.admin")</u></strong></a>
+            #else
+            <a href="$baseUrl/plugins/servlet/godevents/viewer?page=admin"><strong>$i18n.getText("god.events.dict.admin")</strong></a>
+            #end
+        </li>
+        #end
+        <li style="margin-bottom: 7px;list-style: square outside;">
+            #if ($listType == 8)
+            <a href="$baseUrl/plugins/servlet/godevents/viewer?page=prefs"><strong><u>User preferences</u></strong></a>
+            #else
+            <a href="$baseUrl/plugins/servlet/godevents/viewer?page=prefs"><strong>User preferences</strong></a>
+            #end
+        </li>
+    </ul>
+    </td></tr>
+    </table>
+</div>

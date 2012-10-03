@@ -1,0 +1,106 @@
+<html>
+    <head>
+        <title>$i18n.getText("god.events.dict.game.projects.add")</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="decorator" content="atl.general"/>
+        $webResourceManager.requireResource("jira.webresources:global-static")
+        $webResourceManager.requireResource("jira.webresources:jira-global")
+        $webResourceManager.requireResource("com.atlassian.auiplugin:ajs")
+        $webResourceManager.requireResource("jira.webresources:calendar")
+        $webResourceManager.requireResource("jira.webresources:calendar-$lang")
+        $webResourceManager.requireResource("ru.mail.jira.plugins.god-events:godresource")
+    </head>
+    <body class="aui">
+        <form onsubmit="return validateForm();" class="aui" id="agpform" name="agpform" action="${baseUrl}/rest/godeventsws/1.0/geservice/addgproject" method="post">
+            <h3>$i18n.getText("god.events.dict.game.projects.add")</h3>
+            <div class="field-group">
+                <label>$i18n.getText("god.events.page.info")<span class="aui-icon icon-required"></span></label>
+                <input type="text" class="text" id="name" name="name"/>
+            </div>
+            <div class="field-group">
+                <label>$i18n.getText("god.events.page.descr")</label>
+                <textarea rows="3" cols="30" id="descr" name="descr"></textarea>
+            </div>
+            <div class="field-group">
+                <label>$i18n.getText("god.events.page.origname")</label>
+                <input type="text" class="text" id="origname" name="origname"/>
+            </div>
+            <div class="field-group">
+                <label>$i18n.getText("god.events.page.logo")</label>
+                <input type="text" class="text" id="logotype" name="logotype"/>
+            </div>
+            <div class="field-group">
+                <label>$i18n.getText("god.events.page.pagename")</label>
+                <input type="text" class="text" id="page" name="page"/>
+            </div>
+            <div class="field-group">
+                <label>$i18n.getText("god.events.page.developer")</label>
+                <input type="text" class="text" id="developer" name="developer"/>
+            </div>
+            <div class="field-group">
+                <label>$i18n.getText("god.events.page.bmodel")</label>
+                <select id="bm" name="bm">
+                    #foreach($entry in $bms.entrySet())
+                    <option value="$entry.key">$entry.value</option>
+                    #end
+                </select>
+            </div>
+            <div class="field-group">
+                <label>$i18n.getText("god.events.page.companydeps")</label>
+                <select id="cd" name="cd">
+                    #foreach($entry in $cds.entrySet())
+                    <option value="$entry.key">$entry.value</option>
+                    #end
+                </select>
+            </div>
+            <div class="field-group">
+                <label>$i18n.getText("god.events.page.projtype")</label>
+                <select id="pt" name="pt">
+                    #foreach($entry in $pts.entrySet())
+                    <option value="$entry.key">$entry.value</option>
+                    #end
+                </select>
+            </div>
+            <div class="field-group">
+                <label>$i18n.getText("god.events.page.statuses")</label>
+                <select id="sts" name="sts">
+                    #foreach($entry in $sts.entrySet())
+                    <option value="$entry.key">$entry.value</option>
+                    #end
+                </select>
+            </div>
+            <div class="field-group">
+                <label>$i18n.getText("god.events.page.territory")</label>
+                <select id="territory" name="territory">
+                    #foreach($entry in $gpTerr.entrySet())
+                    <option value="$entry.key">$entry.value</option>
+                    #end
+                </select>
+            </div>
+            <div class="field-group">
+                <label for="vps">$i18n.getText("god.events.page.choosegameleaders")</label>
+                <select multiple="multiple" size="10" id="vps" name="vps">
+                #foreach($entry in $allUsers.entrySet())
+                <option value="$entry.key">$entry.value</option>
+                #end
+                </select>
+            </div>
+            <div class="buttons-container">
+                <div class="buttons">
+                    <input type="submit" class="button submit" value='$i18n.getText("god.events.page.save")' #if($bms.size() == 0 || $cds.size() == 0 || $pts.size() == 0)disabled="disabled"#end/>
+                    <a class="button" href='$baseUrl/plugins/servlet/godevents/viewer?page=gameprojects'>$i18n.getText("god.events.page.cancel")</a>
+                </div>
+            </div>
+        </form>
+        <script language="javascript">
+            function validateForm() {
+                if (!AJS.$('#name').val()) {
+                    AJS.$('#name').focus();
+                    AJS.$('#error').remove();
+                    AJS.$('#agpform').prepend('<div id="error" name="error" class="aui-message error">Name must be set</div>');
+                    return false;
+                }
+            }
+        </script>
+    </body>
+</html>

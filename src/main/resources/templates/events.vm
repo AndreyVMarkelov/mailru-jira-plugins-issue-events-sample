@@ -1,0 +1,77 @@
+<html>
+    <head>
+        <title>$i18n.getText("god.events.dict.events")</title>
+        <meta name="decorator" content="atl.general"/>
+        $webResourceManager.requireResource("jira.webresources:global-static")
+        $webResourceManager.requireResource("jira.webresources:jira-global")
+        $webResourceManager.requireResource("com.atlassian.auiplugin:ajs")
+        $webResourceManager.requireResource("ru.mail.jira.plugins.god-events:godresource")
+        <style type="text/css">
+            .headerSortUp { background: url('$baseUrl/images/icons/icon_sortascending.png') no-repeat center right; }
+            .headerSortDown { background: url('$baseUrl/images/icons/icon_sortdescending.png') no-repeat center right; }
+            .tsheader { cursor: pointer; }
+        </style>
+    </head>
+    <body class="aui">
+        <table width="100%" height="100%" cellspacing="0" bgcolor="#ffffff">
+        <tr>
+            <td class="adminMenuWrap">
+                #parse("templates/leftpanel.vm")
+            </td>
+            <td width="1" bgcolor="#bbbbbb"></td>
+            <td valign="top">
+                <table class="jiraform maxWidth">
+                    <tr>
+                        <td class="jiraformheader"><h3 class="formtitle">$i18n.getText("god.events.page.admin.curevents")</h3></td>
+                    </tr>
+                    <tr>
+                        <td class="jiraformbody">
+                            <table width="100%">
+                                <tr>
+                                    <td width="85%">
+                                        <table width="100%" class="grid" id="datatbl" name="datatbl">
+                                        <thead>
+                                        <tr class="tsheader">
+                                            <th>$i18n.getText("god.events.page.name")</th>
+                                            <th>$i18n.getText("god.events.page.gameproject")</th>
+                                            <th>$i18n.getText("god.events.page.eventkind")</th>
+                                            <th>$i18n.getText("god.events.page.descr")</th>
+                                            <th>$i18n.getText("god.events.page.startdate")</th>
+                                            <th>$i18n.getText("god.events.page.enddate")</th>
+                                            <th>$i18n.getText("god.events.page.starttime")</th>
+                                            <th>$i18n.getText("god.events.page.endtime")</th>
+                                            <th>$i18n.getText("god.events.page.act")</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        #foreach($currev in $currevs)
+                                        <tr>
+                                            <td>$currev.getName()</td>
+                                            <td>$gps.get($currev.getGp())</td>
+                                            <td>$eks.get($currev.getEk())</td>
+                                            <td>$currev.getDescr()</td>
+                                            <td>$sdf.format($currev.getStartDateObj())</td>
+                                            <td>#if($currev.getEndDate() != -1)$sdf.format($currev.getEndDateObj())#end</td>
+                                            <td>$currev.getStartTime()</td>
+                                            <td>$currev.getEndTime()</td>
+                                            <td>#if($isAdmin || $card.getGameProjects().contains($currev.getGp()))<a href="$baseUrl/plugins/servlet/godevents/viewer?page=editcurrevent&ev=$currev.getId()">$i18n.getText("god.events.page.act.update")</a>&nbsp;&nbsp;<a href="#" onclick="deleteEvent(event, '$baseUrl', $currev.getId());">$i18n.getText("god.events.page.act.delete")</a>#end</td>
+                                        </tr>
+                                        #end
+                                        </tbody>
+                                        </table>
+                                    </td>
+                                    <td width="15%" valign="top">
+                                        <a href="$baseUrl/plugins/servlet/godevents/viewer?page=addcurrevent"><b>$i18n.getText("god.events.page.act.add")</b></a>
+                                        <hr/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        </table>
+        #include("templates/events-script.vm")
+    </body>
+</html>

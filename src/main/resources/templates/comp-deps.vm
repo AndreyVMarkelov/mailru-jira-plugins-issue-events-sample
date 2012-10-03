@@ -1,0 +1,82 @@
+<html>
+    <head>
+        <title>$i18n.getText("god.events.dict.company.deps")</title>
+        <meta name="decorator" content="atl.general"/>
+        $webResourceManager.requireResource("jira.webresources:global-static")
+        $webResourceManager.requireResource("jira.webresources:jira-global")
+        $webResourceManager.requireResource("com.atlassian.auiplugin:ajs")
+        $webResourceManager.requireResource("ru.mail.jira.plugins.god-events:godresource")
+        <style type="text/css">
+            .headerSortUp { background: url('$baseUrl/images/icons/icon_sortascending.png') no-repeat center right; }
+            .headerSortDown { background: url('$baseUrl/images/icons/icon_sortdescending.png') no-repeat center right; }
+            .tsheader { cursor: pointer; }
+        </style>
+    </head>
+    <body class="aui">
+        <table width="100%" height="100%" cellspacing="0" bgcolor="#ffffff">
+        <tr>
+            <td class="adminMenuWrap">
+                #parse("templates/leftpanel.vm")
+            </td>
+            <td width="1" bgcolor="#bbbbbb">
+            </td>
+            <td valign="top">
+            <table width="100%" cellpadding="10">
+                  <tr>
+                    <td>
+                      <table class="jiraform maxWidth">
+                        <tr>
+                          <td class="jiraformheader">
+                            <h3 class="formtitle">$i18n.getText("god.events.page.admin.compdeps")</h3>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="jiraformbody">
+                            <table width="100%">
+                              <tr>
+                                <td width="85%">
+                                  <table width="100%" class="grid" id="datatbl" name="datatbl">
+                                    <thead>
+                                      <tr class="tsheader">
+                                        <th>$i18n.getText("god.events.page.name")</th>
+                                        <th>$i18n.getText("god.events.page.comment")</th>
+                                        <th>$i18n.getText("god.events.page.act")</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                    #foreach ($cd in $cds)
+                                      <tr>
+                                        <td width="33%">$cd.getName()</td>
+                                        #if ($cd.getComment())
+                                        <td width="33%">$cd.getComment()</td>
+                                        #else
+                                        <td width="33%"></td>
+                                        #end
+                                        <td width="33%"><a onclick="deleteCompDep(event, '$baseUrl', $cd.getId());">$i18n.getText("god.events.page.act.delete")</a></td>
+                                      </tr>
+                                    #end
+                                    </tbody>
+                                  </table>
+                                </td>
+                                <td width="15%" valign="top">
+                                  <a href="$baseUrl/plugins/servlet/godevents/viewer?page=addcompdep"><b>$i18n.getText("god.events.page.act.add")</b></a>
+                                  <hr/>
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+            </td>
+        </tr>
+        </table>
+        <script language="javascript">
+            jQuery(document).ready( function () {
+                jQuery("#datatbl").tablesorter({debug: false});
+            });
+        </script>
+    </body>
+</html>

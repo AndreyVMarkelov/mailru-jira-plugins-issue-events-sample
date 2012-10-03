@@ -1,0 +1,209 @@
+<script language="javascript">
+    //-> add vice-presidents
+    function addVP(event, baseUrl) {
+        event.preventDefault();
+
+        var md = new AJS.Dialog({
+            width:450,
+            height:300,
+            id:"arrival-error-dialog",
+            closeOnOutsideClick: true
+        });
+        md.addHeader(dialogTitleVP);
+        md.addPanel("load_panel", dialogBody);
+        md.addButton(addBtn, function() {
+            if (!AJS.$("#vps :selected").val()) {
+                alert("Choose at least one user");
+                return;
+            }
+
+            var result = new Array();
+            AJS.$("#vps option:selected").each(function() {
+                result.push(AJS.$(this).val());
+            });
+            var output = result.join("&");
+            JIRA.SmartAjax.makeRequest({
+                url: baseUrl + "/rest/godeventsws/1.0/geservice/addvp",
+                type: "POST",
+                dataType: "json",
+                data: {"vps": output},
+                error: function(xhr, ajaxOptions, thrownError) {
+                    alert(xhr.responseText);
+                },
+                success: function(result) {
+                    window.location.reload();
+                }
+            });
+        });
+        md.addCancel(cancelBtn, function(){ md.hide(); });
+        md.show();
+    }
+
+    function initCdDialog(baseUrl)
+    {
+        var res = "";
+        JIRA.SmartAjax.makeRequest({
+            url: baseUrl + "/rest/godeventsws/1.0/geservice/admcddiag",
+            type: "POST",
+            dataType: "json",
+            async: false,
+            error: function(xhr, ajaxOptions, thrownError) {
+                alert(xhr.responseText);
+            },
+            success: function(result) {
+                res = result.html;
+            }
+        });
+
+        return res;
+    }
+
+    function initGpDialog(baseUrl)
+    {
+        var res = "";
+        JIRA.SmartAjax.makeRequest({
+            url: baseUrl + "/rest/godeventsws/1.0/geservice/admgpdiag",
+            type: "POST",
+            dataType: "json",
+            async: false,
+            error: function(xhr, ajaxOptions, thrownError) {
+                alert(xhr.responseText);
+            },
+            success: function(result) {
+                res = result.html;
+            }
+        });
+
+        return res;
+    }
+
+    /**
+     *
+     */
+    function addProjMgr(event, baseUrl) {
+        event.preventDefault();
+
+        var dialogBody = initCdDialog(baseUrl);
+        if (!dialogBody)
+        {
+            return;
+        }
+
+        var md = new AJS.Dialog({
+            width:400,
+            height:200,
+            id:"arrival-error-dialog",
+            closeOnOutsideClick: true
+        });
+        md.addHeader(dialogTitleCP);
+        md.addPanel("load_panel", dialogBody);
+        md.addButton(addBtn, function() {
+            if (!AJS.$("#usr :selected").val() || !AJS.$("#cd :selected").val()) {
+                alert("Choose correct values");
+                return;
+            }
+
+            JIRA.SmartAjax.makeRequest({
+                url: baseUrl + "/rest/godeventsws/1.0/geservice/addprojmgr",
+                type: "POST",
+                dataType: "json",
+                data: {"usr": AJS.$("#usr :selected").val(), "cd": AJS.$("#cd :selected").val()},
+                error: function(xhr, ajaxOptions, thrownError) {
+                    alert(xhr.responseText);
+                },
+                success: function(result) {
+                    window.location.reload();
+                }
+            });
+        });
+        md.addCancel(cancelBtn, function(){ md.hide(); });
+        md.show();
+    }
+
+    /**
+     *
+     */
+    function addGameMgr(event, baseUrl) {
+        event.preventDefault();
+
+        var dialogBody = initGpDialog(baseUrl);
+
+        var md = new AJS.Dialog({
+            width:400,
+            height:200,
+            id:"arrival-error-dialog",
+            closeOnOutsideClick: true
+        });
+        md.addHeader(dialogTitleGP);
+        md.addPanel("load_panel", dialogBody);
+        md.addButton(addBtn, function() {
+            if (!AJS.$("#usr :selected").val() || !AJS.$("#gp :selected").val()) {
+                alert("Choose correct values");
+                return;
+            }
+
+            JIRA.SmartAjax.makeRequest({
+                url: baseUrl + "/rest/godeventsws/1.0/geservice/addgamemgr",
+                type: "POST",
+                dataType: "json",
+                data: {"usr": AJS.$("#usr :selected").val(), "gp": AJS.$("#gp :selected").val()},
+                error: function(xhr, ajaxOptions, thrownError) {
+                    alert(xhr.responseText);
+                },
+                success: function(result) {
+                    window.location.reload();
+                }
+            });
+        });
+        md.addCancel(cancelBtn, function(){ md.hide(); });
+        md.show();
+    }
+
+    function deleteVP(event, baseUrl, user) {
+        event.preventDefault();
+        JIRA.SmartAjax.makeRequest({
+        url: baseUrl + "/rest/godeventsws/1.0/geservice/deletevp",
+        type: "POST",
+        dataType: "json",
+        data: {"user": user},
+        error: function(xhr, ajaxOptions, thrownError) {
+            alert(xhr.responseText);
+        },
+        success: function(result) {
+            window.location.reload();
+        }
+      });
+    }
+
+    function deleteDepMgr(event, baseUrl, user, cp) {
+        event.preventDefault();
+        JIRA.SmartAjax.makeRequest({
+        url: baseUrl + "/rest/godeventsws/1.0/geservice/deletedepmgr",
+        type: "POST",
+        dataType: "json",
+        data: {"user": user, "cp": cp},
+        error: function(xhr, ajaxOptions, thrownError) {
+            alert(xhr.responseText);
+        },
+        success: function(result) {
+            window.location.reload();
+        }
+      });
+    }
+
+    function deleteGameProj(event, baseUrl, user, gp) {
+        event.preventDefault();
+        JIRA.SmartAjax.makeRequest({
+        url: baseUrl + "/rest/godeventsws/1.0/geservice/deletegamemgr",
+        type: "POST",
+        dataType: "json",
+        data: {"user": user, "gp": gp},
+        error: function(xhr, ajaxOptions, thrownError) {
+            alert(xhr.responseText);
+        },
+        success: function(result) {
+            window.location.reload();
+        }
+      });
+    }
+</script>

@@ -1,0 +1,12 @@
+#if ($hasPerm)
+<table width="100%">
+  <tr>
+    <td align="center"><a id="report" name="report" href="$baseUrl/plugins/servlet/godevents/viewer?page=reports" target="_blank"><b><i>$i18n.getText("god.events.replink")</i></b></a></td>
+    #if($hasAdmPerm)
+    <td align="center"><a id="settings" name="settings" href="$baseUrl/plugins/servlet/godevents/viewer?page=settings" target="_blank"><b><i>$i18n.getText("god.events.setlink")</i></b></a></td>
+    #end
+  </tr>
+</table>
+#else
+<table width="100%"><tr><td bgcolor="#de6868" align="center"><strong>$i18n.getText("god.events.noperms")</strong></td></tr></table>
+#end

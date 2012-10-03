@@ -1,0 +1,50 @@
+<script language="javascript">
+    function addBModel(event, baseUrl) {
+        event.preventDefault();
+        var md = new AJS.Dialog({
+            width:400,
+            height:300,
+            id:"addbm-dialog",
+            closeOnOutsideClick: true
+        });
+        md.addHeader(dialogTitle);
+        md.addPanel("load_panel", panelBody);
+        md.addButton(addBtn, function(){
+            if (!AJS.$("#namefld").val()) {
+                alert('The name field must be set');
+                return;
+            }
+
+            JIRA.SmartAjax.makeRequest({
+                url: baseUrl + "/rest/godeventsws/1.0/geservice/addbmodel",
+                type: "POST",
+                dataType: "json",
+                data: {"name": AJS.$("#namefld").val(), "comment": AJS.$("#commentfld").val()},
+                error: function(xhr, ajaxOptions, thrownError) {
+                    alert(xhr.responseText);
+                },
+                success: function(result) {
+                    window.location.reload();
+                }
+            });
+        });
+        md.addCancel(cancelBtn, function(){ md.hide(); });
+        md.show();
+    }
+
+    function deleteProj(event, baseUrl, id) {
+        event.preventDefault();
+        JIRA.SmartAjax.makeRequest({
+        url: baseUrl + "/rest/godeventsws/1.0/geservice/deletebmodel",
+        type: "POST",
+        dataType: "json",
+        data: {"id": id},
+        error: function(xhr, ajaxOptions, thrownError) {
+            alert(xhr.responseText);
+        },
+        success: function(result) {
+            window.location.reload();
+        }
+      });
+    }
+</script>

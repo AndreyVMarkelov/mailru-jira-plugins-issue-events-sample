@@ -1,0 +1,10 @@
+<table>
+    <tr>
+        <td align="right">$i18n.getText("god.events.page.chooseuser")</td>
+        <td><select id="usr" name="usr">#foreach($entry in $allUsers.entrySet())<option value="$entry.key">$entry.value</option>#end</select></td>
+    </tr>
+    <tr>
+        <td align="right">$i18n.getText("god.events.page.choosecompdep")</td>
+        <td><select id="cd" name="cd">#foreach($entry in $cds.entrySet())<option value="$entry.key">$entry.value</option>#end</select></td>
+    </tr>
+</table>

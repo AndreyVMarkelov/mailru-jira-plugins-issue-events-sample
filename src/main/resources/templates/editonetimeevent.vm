@@ -1,0 +1,78 @@
+<html>
+    <head>
+        <title>$i18n.getText("god.events.dict.events.editontime")</title>
+        <meta name="decorator" content="atl.general"/>
+        $webResourceManager.requireResource("jira.webresources:global-static")
+        $webResourceManager.requireResource("jira.webresources:jira-global")
+        $webResourceManager.requireResource("com.atlassian.auiplugin:ajs")
+        $webResourceManager.requireResource("jira.webresources:calendar")
+        $webResourceManager.requireResource("jira.webresources:calendar-$lang")
+        $webResourceManager.requireResource("ru.mail.jira.plugins.god-events:godresource")
+    </head>
+    <body class="aui">
+        <form class="aui" id="agpform" name="agpform" method="post" action="${baseUrl}/rest/godeventsws/1.0/geservice/updateonetimeevent">
+            <h3>$i18n.getText("god.events.dict.events.editontime")</h3>
+            <input type="hidden" id="id" name="id" value="$evId"/>
+            <div class="field-group">
+                <label>$i18n.getText("god.events.page.title")<span class="aui-icon icon-required"></span></label>
+                <input type="text" id="name" name="name" value="$oe.getName()"/>
+            </div>
+            <div class="field-group">
+                <label>$i18n.getText("god.events.page.gameproject")</label>
+                <select id="gp" name="gp">
+                    #foreach($gp in $gps)
+                    <option value="$gp.getId()" #if($gp.getId() == $oe.getGp()) selected="selected" #end>$gp.getLocalName()</option>
+                    #end
+                </select>
+            </div>
+            <div class="field-group">
+                <label>$i18n.getText("god.events.page.eventkind")</label>
+                <select id="ek" name="ek">
+                    #foreach($ek in $eks)
+                    <option value="$ek.getId()" #if($ek.getId() == $oe.getEk()) selected="selected" #end>$ek.getName()</option>
+                    #end
+                </select>
+            </div>
+            <div class="field-group">
+                <label>$i18n.getText("god.events.page.descr")</label>
+                <textarea id="descr" name="descr">$oe.getDescr()</textarea>
+            </div>
+            <div class="field-group">
+                <label>$i18n.getText("god.events.page.justdate")</label>
+                <input type="text" id="justDate" name="justDate" value="$sdf.format($oe.getJustDate())"/><img id="endDate_trigger" src="$baseUrl/images/icons/cal.gif" width="16" height="16" border="0" alt="Pick a end date"/>
+            </div>
+            <div class="field-group">
+                <label>$i18n.getText("god.events.page.justtime")</label>
+                <input type="text" id="justTime" name="justTime" value="$oe.getJustTime()"/>
+            </div>
+            <div class="field-group">
+                <label><span>$i18n.getText("god.events.page.uploadfiles")</span></label>
+                <div id="filesContent" name="filesContent">
+                    #foreach($ev in $evFiles)
+                    <div><input class="checkbox" type="checkbox" checked="" name="files" value="$ev.getId()"/><span>$ev.getName()</span></div>
+                    #end
+                    <input type="file" id="uploadFile" name="uploadFile" onchange="ch('$baseUrl');"/>
+                </div>
+            </div>
+            <div class="buttons-container">
+                <div class="buttons">
+                    <input type="submit" class="button submit" value='$i18n.getText("god.events.page.save")'/>
+                    <a class="button" href='$baseUrl/plugins/servlet/godevents/viewer?page=events'>$i18n.getText("god.events.page.cancel")</a>
+                </div>
+            </div>
+        </form>
+        <form style="display: none;" id="theuploadform" method="post" action="$baseUrl/rest/godeventsws/1.0/geservice/uploadfile" target="postiframe" enctype="multipart/form-data"></form>
+        <script language="javascript">
+            Calendar.setup({
+                firstDay : 0,
+                inputField : 'endDate',
+                button : 'endDate_trigger',
+                align : 'Br',
+                singleClick : true,
+                useISO8601WeekNumbers : false,
+                ifFormat : '%Y-%m-%d'
+            });
+        </script>
+        #include("templates/editonetimeevent-script.vm")
+    </body>
+</html>
